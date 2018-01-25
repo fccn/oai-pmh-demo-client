@@ -69,19 +69,19 @@ You can reuse the ```dsn``` string from the sample configuration file when using
 - The remaining configurations under the ```[pdo]``` group determine how the data is collected from the database. You need to create your own queries to collect data for each of the supported metadata formats (DublinCore and Learning Object Metadata). You can check the queries in ```app.ini.dist``` for comparison.
 There are two groups of queries to create: *list queries* and *fetch queries*.
  - **List queries** provide a summarized list of the elements. The SQL queries are defined under properties named using the format ```<metadata_kind>.listAll``` (*i.e, oai_dc.listAll is the name for the configuration where the SQL query to provide the summarized list of DublinCore elements is defined*). The SQL queries must provide the following structure:
- ```
- oai_id | deleted | datestamp | oai_set
- ```
+   ```
+   oai_id | deleted | datestamp | oai_set
+   ```
    - You can customize the names in the structure in the following configurations:
-  ```
-  [pdo]
-  ...
-  identifier = ; (default: "oai_id")
-  setspec = ; (default: "oai_set")
-  datestamp = ; (default: "datestamp")
-  delspec = ; (default: "deleted")
-  ...
-  ```
+   ```
+   [pdo]
+   ...
+   identifier = ; (default: "oai_id")
+   setspec = ; (default: "oai_set")
+   datestamp = ; (default: "datestamp")
+   delspec = ; (default: "deleted")
+   ...
+   ```
  - **Fetch queries** provide information about an individual element. The SQL queries are defined under properties named using the format ```<metadata_kind>.<set_name>.fetch``` (*i.e oai_dc.videoclip.fetch is the name for the configuration where the SQL query to fetch DublinCore data for an element of the videoclip set is defined*). The SQL queries must provide the following structure:
    ```
   	identifier | contributor | coverage | creator | date_ | description | format_ | language | publisher | relation | rights | source | subject | title | type_
