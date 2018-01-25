@@ -1,0 +1,63 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "98b88a2be5c1ea3485e1e6273620d4b6",
+    "packages": [
+        {
+            "name": "fccn/oai-pmh-core",
+            "version": "1.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/fccn/oai-pmh-core.git",
+                "reference": "d02ab4f81bcf15b6aecaf26ec28d642cb0bfdf61"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/fccn/oai-pmh-core/zipball/d02ab4f81bcf15b6aecaf26ec28d642cb0bfdf61",
+                "reference": "d02ab4f81bcf15b6aecaf26ec28d642cb0bfdf61",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.5.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Fccn\\Oaipmh\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Paulo Costa",
+                    "email": "paulo.costa@fccn.pt"
+                }
+            ],
+            "description": "Implementation of the core functionalities for an OAI-PMH 2.0 Data Provider written in PHP",
+            "keywords": [
+                "DublinCore",
+                "Learning Object Metadata",
+                "OAI-PMH",
+                "fccn",
+                "lom"
+            ],
+            "time": "2018-01-24T16:31:42+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": [],
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": {
+        "php": ">=5.5.0"
+    },
+    "platform-dev": []
+}

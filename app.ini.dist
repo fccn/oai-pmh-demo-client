@@ -1,0 +1,96 @@
+;delimiter .
+
+[base]
+;define a stylesheet for presenting the results on a browser
+xsl = "base.xsl"
+
+[repository]
+name = "FCCN OAI-PMH demo client"
+identifier = "demo.oaipmh.fccn.pt"
+prefix = "oai"
+delimiter = ":"
+show_identifier = true
+protocolVersion = "2.0"
+earliestDatestamp = "2010-09-01"
+deletedRecord = "transient"
+granularity = "YYYY-MM-DDThh:mm:ssZ"
+adminEmail[] = "admin@demo-oai.pt"
+;compression[] = "gzip"
+metadataformats[] = "oai_dc"
+metadataformats[] = "oai_lom"
+;to add other metadata formats add more lines like:
+;metadataformats[] = "some_other"
+
+;list each set as "setSpec=<id>*&setName=<name>"
+;add as many sets as necessary
+sets[] = "setSpec=videoclip&setName=Video Clip"
+sets[] = "setSpec=channel&setName=Channel"
+
+;definitions for tokenized responses
+maxrecords = 10
+maxids = 40
+token.path = "/tmp/ANDS_DEMO_OAIPMH_CLI_DBPD-"
+token.validity = 84600
+;possible acquisition methods: for now just pdo
+acqmethod = "pdo"
+
+;[branding]
+;collectionIcon["url"] =
+;collectionIcon["link"] =
+;collectionIcon["title"] =
+;collectionIcon["width"] =
+;collectionIcon["height"] =
+;xsl =
+;marc =
+;marc_css =
+
+;[rights]
+;name =
+;date =
+;creator =
+;description =
+;identifier =
+;reference =
+
+;pdo configuration
+[pdo]
+kind = "mysql"
+host = "localhost"
+user = "<db-user>"
+pass = "<db-pass>"
+dbname = "<db-name>"
+charset = "utf8"
+;pdo connection string, tested only for mysql database, might need to be changed for other databases
+dsn = "${pdo.kind}:host=${pdo.host},dbname=${pdo.dbname},${pdo.kind}:charset=${pdo.charset}"
+identifier = "oai_id"
+setspec = "oai_set"
+datestamp = "datestamp"
+delspec = "deleted"
+oai_default = "oai_dc"
+;Define the SQL query for listing the metadata for our content here. The example queries were tested in mysql databases
+
+;We first need to define the query for fetching the summarized list of our content:
+;result set from listAll must have the following structure: ${identifier} | ${delspec} | ${datestamp} | ${setspec} , for example:
+oai_dc.listAll = "SELECT clips.uuid AS ${identifier}, IF (clips.removed_at is not null, true, false) AS ${delspec}, clips.created_at AS ${datestamp}, 'videoclip' ${setspec} FROM clips INNER JOIN channels on channels.id = clips.channel_id WHERE kind <> 'test' AND clips.state <> 'error' union SELECT uuid AS ${identifier}, IF (removed_at is not null, 1, 0) AS ${delspec}, created_at AS ${datestamp}, 'channel' ${setspec} FROM channels WHERE kind <> 'test' ORDER BY ${delspec},${datestamp} ASC"
+
+;Next we define the dublin core data fetchers for each of the specs defined above in sets[]
+;For each set we need to define the content identifier attribute and the SQL query to list the metadata
+;The result set of the SQL query must have the following structure: identifier | contributor | coverage | creator | date_ | description | format_ | language | publisher | relation | rights | source | subject | title | type_ | thumbnail
+oai_dc.videoclip.identifier = "clips.uuid"
+oai_dc.videoclip.fetch = "SELECT clips.uuid as identifier, location as coverage, presenter as creator, recording_date as date_, subtitle as description, mime_type as format_, 'pt' as language, organizations.name as publisher, CONCAT('IsInChannel ', channels.name) as relation, IF (channels.access <> 'public', CONCAT('Restricted Access <',clips.license,'>'), CONCAT('Public Access. <',clips.license,'>')) as rights, CONCAT('https://application-url/clip/',clips.uuid) as source, channels.category as subject, title, 'video' as type_, CONCAT('https://application-url/thumbnail/',clips.uuid) as thumbnail FROM clips LEFT JOIN channels on clips.channel_id = channels.id LEFT JOIN organizations on channels.organization_id = organizations.id"
+oai_dc.channel.identifier = "channels.uuid"
+oai_dc.channel.fetch = "SELECT channels.uuid as identifier, channels.contributor as contributor, channels.author as creator, channels.created_at as date_, 'pt' as language, organizations.name as publisher, IF (channels.access <> 'public', CONCAT('Restricted Access <',channels.license,'>'), CONCAT('Public Access <',channels.license,'>')) as rights, CONCAT('https://application-url/channel/',channels.uuid) as source, channels.category as subject, channels.name as title, 'collection' type_ , 'https://application-url/thumbnail/no_thumbnail.png' as thumbnail FROM channels LEFT JOIN organizations on channels.organization_id = organizations.id"
+
+;Next we define the LOM data fetchers for the specs defined above in sets[].
+;For each set we need to define the content identifier attribute and the SQL query to list the metadata
+;The result set of the SQL query must have the following structure: identifier | contributor | coverage | creator | date_ | description | format_ | language | publisher | relation | rights | source | subject | title | type_ | thumbnail
+oai_lom.identifier.catalog = "fccn_demo_client_lom"
+oai_lom.videoclip.identifier = "clips.uuid"
+oai_lom.videoclip.fetch="SELECT clips.uuid as identifier, location as coverage, presenter as creator, recording_date as date_, subtitle as description, clips.mime_type as format_, 'pt' as language, organizations.name as publisher, CONCAT('IsInChannel ', channels.name) as relation, IF (channels.access <> 'public', CONCAT('Restricted Access <',clips.license,'>'), CONCAT('Public Access. <',clips.license,'>')) as rights, CONCAT('https://application-url/clip/',clips.uuid) as source, CONCAT('pt::',channels.category_pt,'$$','en::',channels.category) as subject, title, 'video' as type_, CONCAT('https://application-url/thumbnail/',clips.uuid) as thumbnail FROM clips LEFT JOIN channels on clips.channel_id = channels.id LEFT JOIN organizations on channels.organization_id = organizations.id"
+
+;debug configurations
+[debug]
+show_messages = false
+version = "1.0.1"
+logfile = "/var/log/test.metadata-php_debug.log"
+baseURL = "<app-url>/"

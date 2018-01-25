@@ -1,0 +1,19 @@
+{
+    "name": "fccn/oai-pmh-demo-client",
+    "description": "Demonstration OAI-PHM data provider using the fccn/oai-pmh-core library",
+    "keywords": ["fccn", "oai-pmh", "oai-pmh client", "DublinCore", "LOM", "Learning Object Metadata"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Paulo Costa",
+            "email": "paulo.costa@fccn.pt"
+        }
+    ],
+    "require": {
+      "php": ">=5.5.0",
+        "fccn/oai-pmh-core": "^1.5"
+    },
+    "config": {
+        "process-timeout" : 0
+    }
+}
